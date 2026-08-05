@@ -63,13 +63,18 @@ const HOST = process.env.HOST || (isCloud ? '0.0.0.0' : '127.0.0.1');
  */
 function isAllowedHost(hostHeader: string | undefined): boolean {
   if (!hostHeader) return false;
-  const hostname = hostHeader.startsWith('[')
+  const rawHostname = hostHeader.startsWith('[')
     ? hostHeader.slice(0, hostHeader.indexOf(']') + 1)
     : hostHeader.split(':')[0];
+  // A trailing dot is valid DNS root notation for the same hostname - browser
+  // address bars add one for a bare domain that looks IP-embedded (like a
+  // sslip.io hostname), which this rejected outright until a real request
+  // hit it.
+  const hostname = rawHostname.toLowerCase().replace(/\.$/, '');
 
   const allowedHostnames = new Set(['localhost', '127.0.0.1', '[::1]']);
   if (PUBLIC_HOSTNAME) {
-    allowedHostnames.add(PUBLIC_HOSTNAME.replace(/^https?:\/\//, ''));
+    allowedHostnames.add(PUBLIC_HOSTNAME.replace(/^https?:\/\//, '').toLowerCase());
   }
   return allowedHostnames.has(hostname);
 }
