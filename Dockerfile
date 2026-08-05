@@ -23,6 +23,11 @@ RUN npm run build
 # Production runner
 FROM node:20-alpine AS runner
 
+# wget for the HEALTHCHECK below - not in the base alpine image. Railway never
+# surfaced this because it health-checked over HTTP from outside the
+# container; Coolify runs this Dockerfile's HEALTHCHECK command inside it.
+RUN apk add --no-cache wget
+
 WORKDIR /app
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
