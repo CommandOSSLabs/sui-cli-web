@@ -41,11 +41,15 @@ const CURRENT_VERSION = pkg.version;
 const PACKAGE_NAME = pkg.name;
 
 const PORT = parseInt(process.env.PORT || '3001', 10);
-// Only a real Railway/cloud signal implies 0.0.0.0 - a user picking a
-// non-default PORT for their own local install is not a cloud deployment,
-// and treating it as one used to bind the wallet-management API to every
-// network interface on their machine.
-const isCloud = !!(process.env.RAILWAY_STATIC_URL || process.env.RAILWAY_SERVICE_ID);
+// A hosted deployment sets PUBLIC_HOSTNAME explicitly (this server's own
+// externally-reachable hostname, no protocol). There is no reliable way to
+// detect "running in the cloud" generically from a platform's own env vars -
+// this used to key off Railway's RAILWAY_STATIC_URL/RAILWAY_SERVICE_ID, which
+// broke the moment the app moved to a different host (Coolify sets neither).
+// A user picking a non-default PORT for their own local install still isn't
+// a cloud deployment, so PORT alone must not imply 0.0.0.0.
+const PUBLIC_HOSTNAME = process.env.PUBLIC_HOSTNAME;
+const isCloud = !!PUBLIC_HOSTNAME;
 const HOST = process.env.HOST || (isCloud ? '0.0.0.0' : '127.0.0.1');
 
 /**
@@ -64,16 +68,8 @@ function isAllowedHost(hostHeader: string | undefined): boolean {
     : hostHeader.split(':')[0];
 
   const allowedHostnames = new Set(['localhost', '127.0.0.1', '[::1]']);
-  if (isCloud) {
-    // Railway's own internal healthcheck probe - sent with this fixed Host
-    // regardless of the service's actual public domain. Without it, Railway
-    // can never see this deployment as healthy and rolls back to the last
-    // one that could - this rule shipped once and immediately took down every
-    // deploy after it.
-    allowedHostnames.add('healthcheck.railway.app');
-    for (const domain of [process.env.RAILWAY_PUBLIC_DOMAIN, process.env.RAILWAY_STATIC_URL]) {
-      if (domain) allowedHostnames.add(domain.replace(/^https?:\/\//, ''));
-    }
+  if (PUBLIC_HOSTNAME) {
+    allowedHostnames.add(PUBLIC_HOSTNAME.replace(/^https?:\/\//, ''));
   }
   return allowedHostnames.has(hostname);
 }
@@ -204,28 +200,21 @@ export async function buildServer() {
       // This server also serves the built UI, so requests can legitimately come
       // from its own public domain. The bundle is loaded via <script type="module"
       // crossorigin>, which makes the browser send an Origin header even for
-      // same-origin requests - so without these entries the app rejects its own
-      // asset requests and fails to boot. The platform hands us the hostname
-      // (no protocol), and it changes per environment, so read it rather than
-      // hardcoding it.
-      const selfOrigins = [process.env.RAILWAY_PUBLIC_DOMAIN, process.env.RAILWAY_STATIC_URL]
-        .filter((host): host is string => Boolean(host))
-        .map((host) => (host.startsWith('http') ? host : `https://${host}`));
+      // same-origin requests - so without this the app rejects its own asset
+      // requests and fails to boot. PUBLIC_HOSTNAME changes per deployment, so
+      // it is read from the environment rather than hardcoded here; a user's
+      // own `npx sui-cli-web-server` has no PUBLIC_HOSTNAME set and gets none
+      // of this, which is correct - there is no "own domain" to allow.
+      const selfOrigins = PUBLIC_HOSTNAME
+        ? [PUBLIC_HOSTNAME.startsWith('http') ? PUBLIC_HOSTNAME : `https://${PUBLIC_HOSTNAME}`]
+        : [];
 
       const allowedOrigins = [
-        // The one hosted UI. selfOrigins below only covers the copy of this
-        // server running on the platform; a user's own `npx sui-cli-web-server`
-        // has no RAILWAY_* variables, so the hosted UI's origin has to be listed
-        // here or every local install rejects the very UI it exists to serve.
-        //
-        // The previous hosts (cli.firstmovers.io, harriweb3.dev, the Vercel
-        // previews) were removed deliberately. Any local server that is driven
-        // by one of those pages will now refuse it; set ALLOWED_ORIGINS to add
-        // an origin back without a code change.
-        'https://sui-cli-web-production.up.railway.app',
-        // The deployment's own domain(s)
+        // The deployment's own domain, from PUBLIC_HOSTNAME.
         ...selfOrigins,
-        // Additional origins from environment
+        // Additional origins from environment - e.g. a previous hosted UI's
+        // domain, or a local page you're driving this server from. Set
+        // ALLOWED_ORIGINS to add one without a code change.
         ...envOrigins,
       ];
 

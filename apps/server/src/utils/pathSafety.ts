@@ -48,11 +48,12 @@ export function isProjectPathAllowed(targetPath: string): boolean {
  * machine. Features that inspect the local filesystem or local processes are
  * meaningless there and should refuse rather than answer, because "there" is a
  * shared container that no user owns.
+ *
+ * A hosted deployment sets PUBLIC_HOSTNAME explicitly (see index.ts) - this
+ * used to check Railway's own env vars directly, which silently stopped
+ * detecting "hosted" at all the moment the deployment moved to a platform
+ * that doesn't set them.
  */
 export function isHostedDeployment(): boolean {
-  return !!(
-    process.env.RAILWAY_SERVICE_ID ||
-    process.env.RAILWAY_STATIC_URL ||
-    process.env.RAILWAY_PUBLIC_DOMAIN
-  );
+  return !!process.env.PUBLIC_HOSTNAME;
 }

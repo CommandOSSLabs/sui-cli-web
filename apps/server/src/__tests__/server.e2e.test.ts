@@ -122,7 +122,7 @@ describe('devstack routes are wired through the real stack', () => {
   it('answers 503 on a hosted deployment instead of inspecting a shared container', async () => {
     // isHostedDeployment() reads this per-request, so setting it here exercises
     // the guard without rebuilding the server.
-    process.env.RAILWAY_SERVICE_ID = 'test-service';
+    process.env.PUBLIC_HOSTNAME = 'test.example.com';
     try {
       const res = await app.inject({
         method: 'GET',
@@ -130,7 +130,7 @@ describe('devstack routes are wired through the real stack', () => {
       });
       expect(res.statusCode).toBe(503);
     } finally {
-      delete process.env.RAILWAY_SERVICE_ID;
+      delete process.env.PUBLIC_HOSTNAME;
     }
   });
 });
