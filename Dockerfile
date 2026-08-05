@@ -1,4 +1,4 @@
-# Multi-stage Docker build for Railway deployment
+# Multi-stage Docker build (deployed via Coolify)
 FROM node:20-alpine AS builder
 
 WORKDIR /app
