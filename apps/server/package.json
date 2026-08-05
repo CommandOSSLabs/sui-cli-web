@@ -41,11 +41,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hien-p/raycast-sui-cli.git"
+    "url": "https://github.com/CommandOSSLabs/sui-cli-web.git"
   },
   "homepage": "https://sui-cli-web-production.up.railway.app",
   "bugs": {
-    "url": "https://github.com/hien-p/raycast-sui-cli/issues"
+    "url": "https://github.com/CommandOSSLabs/sui-cli-web/issues"
   },
   "engines": {
     "node": ">=18.0.0"
