@@ -5,6 +5,7 @@ import { App } from './App';
 import { ErrorBoundary } from './components/shared/ErrorBoundary';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { initializeAnalytics } from './lib/analytics';
+import { registerPWA } from './lib/pwa';
 // import { initClarity } from './lib/clarity'; // Temporarily disabled
 // import { initStatsig } from './lib/statsig'; // Temporarily disabled - __DEFINES__ error
 import './styles/globals.css';
@@ -33,6 +34,11 @@ window.addEventListener('load', () => {
 
 // Initialize Analytics
 initializeAnalytics();
+
+// Register the service worker (production build only - see src/lib/pwa.ts
+// for why 'autoUpdate' plus a manual reload prompt was chosen for a wallet
+// tool like this one).
+registerPWA();
 // initClarity(); // Temporarily disabled
 // initStatsig(); // Session replay + auto-capture - Temporarily disabled
 

@@ -98,6 +98,57 @@ export function showSuccessToast({ message, details, icon = '🎉' }: ToastSucce
 }
 
 /**
+ * Prompts that a newer, already-active service worker is ready and offers a
+ * manual reload. Used for the PWA update flow (see src/lib/pwa.ts) instead
+ * of an immediate, unannounced reload - this app drives wallet operations
+ * (key export, signing, transfers), where a surprise full-page reload
+ * mid-flow could drop unsaved state or interrupt something sensitive.
+ * Persists (no auto-dismiss) until the user acts.
+ */
+export function showUpdateAvailableToast(onReload: () => void) {
+  return toast.custom(
+    (t) => (
+      <div
+        className={`${
+          t.visible ? 'animate-enter' : 'animate-leave'
+        } max-w-md w-full bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-sm shadow-xl rounded-xl pointer-events-auto flex border border-blue-500/30`}
+      >
+        <div className="flex-1 w-0 p-4">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl flex-shrink-0">⬆️</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-blue-300 mb-1">Update available</p>
+              <p className="text-xs text-blue-300/80 leading-relaxed">
+                A new version finished loading in the background. Reload when it's safe to do
+                so.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col border-l border-blue-500/20">
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+              onReload();
+            }}
+            className="flex-1 border-b border-blue-500/20 px-4 flex items-center justify-center text-sm font-medium text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 transition-colors"
+          >
+            Reload
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="flex-1 px-4 flex items-center justify-center text-xs text-blue-400/70 hover:text-blue-300 hover:bg-blue-500/10 transition-colors"
+          >
+            Later
+          </button>
+        </div>
+      </div>
+    ),
+    { duration: Infinity, id: 'pwa-update-available' }
+  );
+}
+
+/**
  * Display a beautiful info toast
  */
 export function showInfoToast({ message, icon = 'ℹ️' }: { message: string; icon?: string }) {
