@@ -9,9 +9,19 @@
  */
 
 import { useMemo, useState } from 'react';
-import type { MoveDatatype, MoveFunction, PackageModules } from '@/api/services/packages';
+import type { MoveDatatype, MoveFunction, MoveModule, PackageModules } from '@/api/services/packages';
 import { buildExplorerUrl, getDefaultExplorer, type NetworkType } from '@/lib/explorer';
+import { Tooltip } from '@/components/ui/tooltip';
 import { ArrowRight, Boxes, Braces, ChevronDown, Copy, ExternalLink, Filter } from 'lucide-react';
+import {
+  classifyByAbilities,
+  confirmOtw,
+  findCapabilityGates,
+  findHotPotatoFlow,
+  hasCapabilityName,
+  hasUidFirstField,
+  isOtwNameShape,
+} from './patternDetection';
 
 export function truncate(id: string, chars = 8): string {
   if (!id || id.length <= chars * 2 + 3) return id;
@@ -60,8 +70,75 @@ function FunctionRow({ fn }: { fn: MoveFunction }) {
   );
 }
 
-function DatatypeRow({ dt }: { dt: MoveDatatype }) {
+/** Discriminant for which pattern a badge represents - kept separate from
+ * `label` (the display copy) so callers branch on this instead of matching
+ * literal UI text. */
+type PatternKind = 'capability' | 'possible-otw' | 'witness' | 'hot-potato';
+
+/** Suggestive Capability/Witness/Hot-Potato badge for a datatype, built from
+ * its ability set plus (for capabilities) its name/field shape and (for
+ * witnesses) its name/field shape. See the regex-risk comment in
+ * patternDetection.ts - this is a signal, not a proof. */
+function patternBadge(
+  dt: MoveDatatype,
+  mod: MoveModule
+): { kind: PatternKind; label: string; className: string; tooltip?: string } | null {
+  const ability = classifyByAbilities(dt);
+  if (ability === 'capability' && hasUidFirstField(dt) && hasCapabilityName(dt)) {
+    return {
+      kind: 'capability',
+      label: 'Capability',
+      className: 'text-sky-400 bg-sky-500/10 border-sky-500/20',
+    };
+  }
+  if (ability === 'witness-shape') {
+    if (isOtwNameShape(dt, mod.name)) {
+      return {
+        kind: 'possible-otw',
+        label: 'Possible OTW',
+        className: 'text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/20',
+        tooltip: 'Name and shape match a one-time witness - shape only, not confirmed against init()',
+      };
+    }
+    return {
+      kind: 'witness',
+      label: 'Witness',
+      className: 'text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/20',
+    };
+  }
+  if (ability === 'hot-potato') {
+    return {
+      kind: 'hot-potato',
+      label: 'Hot Potato',
+      className: 'text-orange-400 bg-orange-500/10 border-orange-500/20',
+    };
+  }
+  return null;
+}
+
+function DatatypeRow({
+  dt,
+  mod,
+  modules,
+}: {
+  dt: MoveDatatype;
+  mod: MoveModule;
+  /** Every module in the package - capability gates can live outside `mod`. */
+  modules: MoveModule[];
+}) {
   const generics = dt.typeParameters.length ? `<${dt.typeParameters.join(', ')}>` : '';
+  const [showPattern, setShowPattern] = useState(false);
+
+  const badge = patternBadge(dt, mod);
+  const otwConfirmed = badge?.kind === 'possible-otw' && confirmOtw(dt, mod);
+  const hotPotatoFlow = badge?.kind === 'hot-potato' ? findHotPotatoFlow(dt, mod) : null;
+  const capabilityGates = badge?.kind === 'capability' ? findCapabilityGates(dt, modules) : [];
+  const hasPatternDetails =
+    otwConfirmed ||
+    (hotPotatoFlow !== null &&
+      (hotPotatoFlow.producers.length > 0 || hotPotatoFlow.consumers.length > 0)) ||
+    capabilityGates.length > 0;
+
   return (
     <div className="p-3 bg-secondary rounded-lg border border-border">
       <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -80,6 +157,23 @@ function DatatypeRow({ dt }: { dt: MoveDatatype }) {
             {a}
           </span>
         ))}
+        {badge &&
+          (() => {
+            const badgeSpan = (
+              <span
+                className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${badge.className}`}
+              >
+                {badge.label}
+              </span>
+            );
+            return badge.tooltip ? (
+              <Tooltip content={badge.tooltip} side="top">
+                {badgeSpan}
+              </Tooltip>
+            ) : (
+              badgeSpan
+            );
+          })()}
       </div>
       {dt.fields.length > 0 && (
         <div className="space-y-1 pl-2 border-l-2 border-border">
@@ -104,6 +198,29 @@ function DatatypeRow({ dt }: { dt: MoveDatatype }) {
               ))}
             </div>
           ))}
+        </div>
+      )}
+      {hasPatternDetails && (
+        <div className="mt-2 pt-2 border-t border-border/50">
+          <button
+            type="button"
+            onClick={() => setShowPattern((v) => !v)}
+            className="text-[11px] text-tertiary hover:text-muted-foreground transition-colors"
+          >
+            {showPattern ? 'Hide' : 'Show'} pattern details
+          </button>
+          {showPattern && (
+            <div className="mt-1.5 space-y-1 text-[11px] font-mono text-muted-foreground">
+              {otwConfirmed && <div>Passed as OTW to init</div>}
+              {hotPotatoFlow && hotPotatoFlow.producers.length > 0 && (
+                <div>Produced by: {hotPotatoFlow.producers.join(', ')}</div>
+              )}
+              {hotPotatoFlow && hotPotatoFlow.consumers.length > 0 && (
+                <div>Consumed by: {hotPotatoFlow.consumers.join(', ')}</div>
+              )}
+              {capabilityGates.length > 0 && <div>Used as gate in: {capabilityGates.join(', ')}</div>}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -367,7 +484,7 @@ export function PackageModulesView({
                         Types
                       </div>
                       {m.datatypes.map((dt) => (
-                        <DatatypeRow key={dt.name} dt={dt} />
+                        <DatatypeRow key={dt.name} dt={dt} mod={m} modules={pkg.modules} />
                       ))}
                     </div>
                   )}
