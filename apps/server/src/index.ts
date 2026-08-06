@@ -215,11 +215,17 @@ export async function buildServer() {
         : [];
 
       const allowedOrigins = [
+        // The one canonical hosted UI. selfOrigins above only covers the
+        // copy of this server running ON that platform (via PUBLIC_HOSTNAME);
+        // a user's own `npx sui-cli-web-server` has no PUBLIC_HOSTNAME set,
+        // so the hosted UI's origin has to be listed here too or every local
+        // install rejects the very UI it exists to pair with. Set
+        // ALLOWED_ORIGINS to add another one back without a code change.
+        'https://sui-cli.dev',
         // The deployment's own domain, from PUBLIC_HOSTNAME.
         ...selfOrigins,
         // Additional origins from environment - e.g. a previous hosted UI's
-        // domain, or a local page you're driving this server from. Set
-        // ALLOWED_ORIGINS to add one without a code change.
+        // domain, or a local page you're driving this server from.
         ...envOrigins,
       ];
 
@@ -723,7 +729,7 @@ async function main() {
 ║   Server running at: http://localhost:${PORT}                  ║
 ║                                                               ║
 ║   Now open the web UI:                                        ║
-║   → https://sui-cli-web-production.up.railway.app             ║
+║   → https://sui-cli.dev                                       ║
 ║                                                               ║
 ║   The UI will connect to this local server automatically.     ║
 ║   Keep this terminal open while using the app.                ║
