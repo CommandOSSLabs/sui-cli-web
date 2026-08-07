@@ -1,5 +1,5 @@
 # Sui CLI Web - robots.txt
-# https://sui-cli-web-production.up.railway.app
+# https://sui-cli.dev
 
 User-agent: *
 Allow: /
@@ -9,4 +9,4 @@ Disallow: /api/
 Disallow: /_internal/
 
 # Blog sitemap (served at /blog)
-Sitemap: https://sui-cli-web-production.up.railway.app/blog/sitemap-index.xml
+Sitemap: https://sui-cli.dev/blog/sitemap-index.xml

@@ -12,16 +12,16 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Sui CLI Web',
-  url: 'https://sui-cli-web-production.up.railway.app',
-  logo: 'https://sui-cli-web-production.up.railway.app/sui-logo.png',
+  url: 'https://sui-cli.dev',
+  logo: 'https://sui-cli.dev/sui-logo.png',
   sameAs: [
-    'https://github.com/hien-p/raycast-sui-cli',
+    'https://github.com/CommandOSSLabs/sui-cli-web',
     'https://www.npmjs.com/package/sui-cli-web-server',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'technical support',
-    url: 'https://github.com/hien-p/raycast-sui-cli/issues',
+    url: 'https://github.com/CommandOSSLabs/sui-cli-web/issues',
   },
 };
 
@@ -48,10 +48,10 @@ const softwareApplicationSchema = {
     'Gas Coin Management',
     'Multi-Environment Support',
   ],
-  screenshot: 'https://sui-cli-web-production.up.railway.app/og-image.svg',
+  screenshot: 'https://sui-cli.dev/og-image.png',
   softwareVersion: '1.1.0',
   downloadUrl: 'https://www.npmjs.com/package/sui-cli-web-server',
-  installUrl: 'https://sui-cli-web-production.up.railway.app/setup',
+  installUrl: 'https://sui-cli.dev/setup',
 };
 
 // WebSite schema - For sitelinks search box
@@ -59,10 +59,10 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Sui CLI Web',
-  url: 'https://sui-cli-web-production.up.railway.app',
+  url: 'https://sui-cli.dev',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://sui-cli-web-production.up.railway.app/app?q={search_term_string}',
+    target: 'https://sui-cli.dev/app?q={search_term_string}',
     'query-input': 'required name=search_term_string',
   },
 };
@@ -76,13 +76,13 @@ const setupBreadcrumbSchema = {
       '@type': 'ListItem',
       position: 1,
       name: 'Home',
-      item: 'https://sui-cli-web-production.up.railway.app',
+      item: 'https://sui-cli.dev',
     },
     {
       '@type': 'ListItem',
       position: 2,
       name: 'Setup',
-      item: 'https://sui-cli-web-production.up.railway.app/setup',
+      item: 'https://sui-cli.dev/setup',
     },
   ],
 };
@@ -124,7 +124,7 @@ const howToSchema = {
     {
       '@type': 'HowToStep',
       name: 'Access the Web Interface',
-      text: 'Open https://sui-cli-web-production.up.railway.app in your browser',
+      text: 'Open https://sui-cli.dev in your browser',
     },
   ],
 };

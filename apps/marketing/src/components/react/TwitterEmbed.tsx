@@ -32,7 +32,7 @@ declare global {
 export function TwitterEmbed({
   tweetUrl,
   theme = 'dark',
-  watermark = 'sui-cli-web-production.up.railway.app',
+  watermark = 'sui-cli.dev',
   maxTilt = 12,
 }: TwitterEmbedProps) {
   const containerRef = useRef<HTMLDivElement>(null);

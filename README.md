@@ -17,7 +17,7 @@ back.
 ![npm](https://img.shields.io/npm/v/sui-cli-web-server)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-green)
 
-**Live**: https://sui-cli-web-production.up.railway.app · **npm**: `sui-cli-web-server`
+**Live**: https://sui-cli.dev · **npm**: `sui-cli-web-server`
 
 ## What you get
 
@@ -88,7 +88,7 @@ Three pieces, one of which you already have:
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  Browser                                                     │
-│  https://sui-cli-web-production.up.railway.app               │
+│  https://sui-cli.dev               │
 └──────────────────────────────────────────────────────────────┘
                              │
                              │  HTTP to http://localhost:<port>
@@ -135,7 +135,7 @@ npx sui-cli-web-server
 > called `sui-cli-web` while the package is `sui-cli-web-server` is what makes
 > this easy to get wrong; `npx` resolves the package name, not the binary.
 
-Then open **https://sui-cli-web-production.up.railway.app** — it finds your
+Then open **https://sui-cli.dev** — it finds your
 server automatically.
 
 > The UI discovers the server by scanning ports 3001–3005, 4001, 4002, 8001
@@ -177,10 +177,11 @@ so the blog routes do not exist in the deployment.
 
 ## Deployment
 
-The hosted app runs on Railway from the repository root `Dockerfile`
-(`railway.json` sets `builder: DOCKERFILE`). The build compiles every
-workspace, then copies the marketing changelog output into the client's
-`dist/blog`, and the server serves the whole thing.
+The hosted app runs on Coolify from the repository root `Dockerfile` —
+Coolify's own GitHub integration builds and deploys it on every push to
+`master`, no separate CI deploy step. The build compiles every workspace,
+then copies the marketing changelog output into the client's `dist/blog`,
+and the server serves the whole thing.
 
 Two things worth knowing before changing it:
 
@@ -217,7 +218,7 @@ lsof -ti:3001 | xargs kill -9        # macOS/Linux
   expose it without putting authentication in front of it first.
 - Private keys stay in your local Sui CLI config. Export is confirmation-gated
   and is the only path that returns a raw key.
-- Everything is open source — [read it](https://github.com/hien-p/raycast-sui-cli).
+- Everything is open source — [read it](https://github.com/CommandOSSLabs/sui-cli-web).
 
 ## Documentation
 
@@ -225,7 +226,7 @@ lsof -ti:3001 | xargs kill -9        # macOS/Linux
 |---|---|
 | [Server README](apps/server/README.md) | The npm package: install, endpoints, configuration |
 | [MCP Server](packages/mcp/README.md) | Read-only MCP server for AI agents |
-| [Changelog](https://sui-cli-web-production.up.railway.app/changelog) | What shipped, by date |
+| [Changelog](https://sui-cli.dev/changelog) | What shipped, by date |
 
 Architecture notes (backend, dashboard, object inspector, MCP design, backlog)
 live in `docs/`, which is currently **gitignored** — they exist on a checkout
@@ -244,7 +245,7 @@ MIT.
 
 ## Links
 
-- [Live app](https://sui-cli-web-production.up.railway.app)
+- [Live app](https://sui-cli.dev)
 - [npm package](https://www.npmjs.com/package/sui-cli-web-server)
-- [GitHub](https://github.com/hien-p/raycast-sui-cli)
+- [GitHub](https://github.com/CommandOSSLabs/sui-cli-web)
 - [Sui documentation](https://docs.sui.io)
