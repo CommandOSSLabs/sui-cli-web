@@ -6,7 +6,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Terminal, Send, Zap, Network, Droplets, Users, Package, Eye } from "lucide-react";
+import { Terminal, Zap, Network, Package, Eye } from "lucide-react";
 
 // Feature cards data with images - matching actual app screenshots
 const FEATURE_CARDS = [
@@ -71,16 +71,15 @@ const FEATURE_CARDS = [
     icon: Package,
     gradient: 'from-pink-500/20 to-rose-500/20',
     borderColor: 'border-pink-500/30',
-    image: '/images/landing/package_deployted_profiles.png',
+    image: '/images/landing/package_deployed_profiles.png',
   },
 ];
 
 interface StickyCardProps {
   card: typeof FEATURE_CARDS[0];
-  index: number;
 }
 
-function StickyCard({ card, index }: StickyCardProps) {
+function StickyCard({ card }: StickyCardProps) {
   const vertMargin = 10;
   const container = useRef(null);
   const [maxScrollY, setMaxScrollY] = useState(Infinity);
@@ -168,14 +167,14 @@ export function StickyCardsSection() {
     <section className="relative flex w-full flex-col items-center gap-[8vh] sm:gap-[10vh] px-2 sm:px-4 pt-0 pb-[20vh] sm:pb-[30vh] -mt-[15vh] sm:-mt-[20vh]">
       {/* Section header */}
       <div className="text-center mb-4 sm:mb-8">
-        <span className="text-rose-400 text-xs sm:text-sm tracking-wider uppercase">Features in Action</span>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mt-1 sm:mt-2">
+        <span className="text-foreground/60 text-xs sm:text-sm tracking-wider uppercase">Features in Action</span>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mt-1 sm:mt-2">
           See what you can do
         </h2>
       </div>
 
-      {FEATURE_CARDS.map((card, idx) => (
-        <StickyCard key={card.id} card={card} index={idx} />
+      {FEATURE_CARDS.map((card) => (
+        <StickyCard key={card.id} card={card} />
       ))}
     </section>
   );
