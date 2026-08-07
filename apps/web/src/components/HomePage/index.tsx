@@ -17,8 +17,10 @@ import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '@/config/version';
 import { useTheme } from '@/contexts/ThemeContext';
 import { StructuredData } from '../SEO/StructuredData';
-import { HexFloatHero } from './HexFloatHero';
+import { StickyCardsSection } from '../ui/sticky-cards';
 import { Features4 } from './Features4';
+import { FounderIntro } from './FounderIntro';
+import { HexFloatHero } from './HexFloatHero';
 import { TestimonialWall } from './TestimonialWall';
 
 export function HomePage() {
@@ -95,7 +97,7 @@ export function HomePage() {
                 </button>
 
                 <a
-                  href="https://github.com/hien-p/raycast-sui-cli"
+                  href="https://github.com/CommandOSSLabs/sui-cli-web"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 bg-foreground/10 hover:bg-foreground/20 active:bg-foreground/30 text-foreground/80 hover:text-foreground rounded-lg transition-all border border-foreground/20 hover:border-foreground/40 text-sm min-h-[44px] flex items-center gap-1.5"
@@ -173,7 +175,7 @@ export function HomePage() {
                   </button>
 
                   <a
-                    href="https://github.com/hien-p/raycast-sui-cli"
+                    href="https://github.com/CommandOSSLabs/sui-cli-web"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
@@ -223,8 +225,14 @@ export function HomePage() {
         {/* ============ FEATURES (Auto-cycling tabbed) ============ */}
         <Features4 />
 
+        {/* ============ FEATURES IN ACTION (sticky scroll screenshots) ============ */}
+        <StickyCardsSection />
+
         {/* ============ TESTIMONIAL WALL (hover to highlight) ============ */}
         <TestimonialWall />
+
+        {/* ============ FOUNDER INTRO ============ */}
+        <FounderIntro />
 
         {/* ============ FINAL CTA ============ */}
         <section className="relative z-20 py-16 sm:py-20 md:py-24 px-4">
@@ -272,7 +280,7 @@ export function HomePage() {
               </div>
               <div className="flex items-center gap-4 sm:gap-6">
                 <a
-                  href="https://github.com/hien-p/raycast-sui-cli"
+                  href="https://github.com/CommandOSSLabs/sui-cli-web"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-foreground active:text-foreground transition-colors py-2 px-3 sm:p-0 min-h-[44px] sm:min-h-0 flex items-center"

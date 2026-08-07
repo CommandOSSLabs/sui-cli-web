@@ -18,11 +18,6 @@ export function TestimonialWall() {
           </p>
 
             <Testimonials blur={4} dimOpacity={0.18}>
-              <Testimonial name="Harry Phan" title="Smart Contract Engineer">
-                Publishing a package used to be four terminal tabs and a prayer.
-                Now it&apos;s one keystroke and I can actually read the object
-                changes.
-              </Testimonial>
               <Testimonial name="Hulk" title="Smart Contract Engineer">
                 The gas breakdown alone paid for itself — we caught a loop that
                 was burning 40% of our budget on a single entry function.

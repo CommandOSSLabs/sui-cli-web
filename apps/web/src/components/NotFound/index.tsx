@@ -80,7 +80,7 @@ export function NotFound() {
                 <div className="flex items-start gap-2">
                   <span className="text-green-400 shrink-0">$</span>
                   <span className="text-white/80">
-                    curl https://sui-cli-web-production.up.railway.app{typedPath}
+                    curl https://sui-cli.dev{typedPath}
                     <span
                       className={`inline-block w-2 h-4 bg-white/80 ml-0.5 ${showCursor ? 'opacity-100' : 'opacity-0'}`}
                     />

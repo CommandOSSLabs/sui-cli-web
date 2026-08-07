@@ -40,19 +40,23 @@ binds `127.0.0.1` and runs next to the user's own `sui` CLI and keystore. The
 hosted web UI talks to it over `http://localhost:<port>`. Nothing is exposed
 beyond the machine.
 
-**Hosted deployment (what is live now).** The same server also runs on Railway
-at `sui-cli-web-production.up.railway.app`, where it serves the built UI as
+**Hosted deployment (what is live now).** The same server also runs on
+Coolify at `sui-cli.dev`, where it serves the built UI as
 static files and answers `/api/*` on the public internet.
 
 The bind address is decided at startup (`apps/server/src/index.ts`):
 
 ```ts
-const isCloud = !!(RAILWAY_STATIC_URL || RAILWAY_SERVICE_ID || PORT);
+const PUBLIC_HOSTNAME = process.env.PUBLIC_HOSTNAME;
+const isCloud = !!PUBLIC_HOSTNAME;
 const HOST = process.env.HOST || (isCloud ? '0.0.0.0' : '127.0.0.1');
 ```
 
-Note that a bare `PORT` variable is enough to flip this — any platform that
-injects `PORT` gets `0.0.0.0`.
+This used to key off Railway's `RAILWAY_STATIC_URL`/`RAILWAY_SERVICE_ID`, but
+that broke the moment the app moved to Coolify, which sets neither. A hosted
+deployment now sets `PUBLIC_HOSTNAME` explicitly; a bare `PORT` no longer
+implies `0.0.0.0` on its own, since a user picking a non-default port for
+their own local install isn't a cloud deployment.
 
 **There is no authentication on any endpoint.** Locally that is fine: the
 trust boundary is the loopback interface, and anything that can reach
@@ -65,7 +69,7 @@ work that gives the hosted instance access to real key material has to add
 authentication first.
 
 CORS is an allowlist, never a wildcard. It now holds exactly one hosted
-origin — `https://sui-cli-web-production.up.railway.app` — plus regexes for
+origin — `https://sui-cli.dev` — plus regexes for
 `localhost` and `127.0.0.1`, whatever the platform reports as this
 deployment's own domain, and anything in `ALLOWED_ORIGINS`. The earlier hosts
 (`cli.firstmovers.io`, `harriweb3.dev`, the Vercel previews) were removed on

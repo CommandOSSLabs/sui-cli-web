@@ -1,0 +1,78 @@
+# Sui CLI Web
+
+> A keyboard-first web interface over the Sui CLI you already have installed. It is not a wallet: there is no account to create, nothing to connect, no key to paste. A small server runs on your machine and shells out to your own `sui` binary against your own `~/.sui` config; the browser only renders what comes back — private keys never leave your machine.
+
+## Quick start
+
+- Install the Sui CLI if you haven't: `brew install sui` (macOS) or `cargo install --locked sui` (any platform)
+- Run the local companion server and leave it running: `npx sui-cli-web-server`
+- Open https://sui-cli.dev — it auto-discovers the local server by scanning ports 3001-3005, 4001, 4002, 8001, 8080
+- Use the exact package name `sui-cli-web-server`. `sui-cli-web` is a different, older published package (1.0.2) that is no longer updated.
+
+## How it works
+
+Three pieces, one of which you already have: browser (`https://sui-cli.dev`) <-> local server (`npx sui-cli-web-server`, binds `127.0.0.1`) <-> your `sui` CLI and `~/.sui/sui_config/*`. There is no database and no server-side state — the source of truth is whatever `sui client`/`sui keytool` report, so nothing can drift out of sync with your CLI. The hosted UI at sui-cli.dev serves the interface only; it has no Sui config or keystore of its own.
+
+## Features (Account)
+
+- [Manage Addresses](https://sui-cli.dev/app/addresses): view, switch, and create wallets
+- [Switch Network](https://sui-cli.dev/app/environments): change network - devnet, testnet, mainnet, localnet, or a custom RPC
+
+## Features (Assets)
+
+- [My Objects](https://sui-cli.dev/app/objects): browse NFTs, capabilities, and owned objects - ownership-kind detection, Display metadata, TransferPolicy/Kiosk cards, version history
+- [My Coins](https://sui-cli.dev/app/coins): view every coin type held, with one-tap transfer, split and merge
+- [My Packages](https://sui-cli.dev/app/packages): explore packages you've published - modules, functions, types, and automatic Capability/Witness/Hot-Potato Move design-pattern detection
+- [Dynamic Fields](https://sui-cli.dev/app/dynamic-fields): query dynamic fields on any object
+
+## Features (Actions)
+
+- [Transfer](https://sui-cli.dev/app/transfer): send SUI or objects to another address, with a gas dry-run before signing
+- [Request Faucet](https://sui-cli.dev/app/faucet): get free devnet/testnet tokens
+
+## Features (Development)
+
+- [Move Studio](https://sui-cli.dev/app/move): build, test, publish and upgrade Move packages
+- [Transaction Inspector](https://sui-cli.dev/app/inspector): inspect and replay past transactions, analyze where gas went
+- [Developer Tools](https://sui-cli.dev/app/devtools): coverage, disassembly, package summary
+- [Devstack Bridge](https://sui-cli.dev/app/devstack): read a local devstack project and switch to its network
+- [Derived Address Calculator](https://sui-cli.dev/app/derived-objects): compute a derived object's address from a parent + key
+
+## Features (Security)
+
+- [Key Management](https://sui-cli.dev/app/keytool): generate keys, sign messages, multi-sig - key export is confirmation-gated
+- [Verification Tools](https://sui-cli.dev/app/security): verify source, verify bytecode, decode transactions
+
+## Also included
+
+- Dashboard: every wallet in one table (balance, object count, packages published), balance-over-time, coin-type breakdown, 12-week activity heatmap
+- Walrus Memory: decoded blob details, memwal accounts, Seal-based decryption, delegate-key management - in the Object Inspector's Walrus Memory tab
+- Command palette: press Cmd+K / Ctrl+K anywhere in the app for any of the above
+- Installable as a PWA
+
+## For AI agents
+
+- `@sui-cli-web/mcp`: a read-only MCP server exposing environment, wallet, balance and object queries through this project's own validated, rate-limited API — an agent gets answers without shell access to `sui` or private keys ever entering its context.
+
+## API (local server)
+
+- Base URL: `http://localhost:<port>/api` (default port 3001)
+- `GET /health` — liveness + service identity, outside the `/api` prefix
+- `GET /api/addresses`, `POST /api/addresses/create`, `POST /api/addresses/switch`
+- `POST /api/transfers/sui`, `POST /api/transfers/sui/dry-run`, `POST /api/transfers/object`
+- `POST /api/gas/split`, `POST /api/gas/merge`
+- `GET /api/environments`, `POST /api/environments/switch`, `POST /api/environments`
+- `POST /api/move/build`, `POST /api/move/test`, `POST /api/packages/publish`, `POST /api/packages/upgrade`
+- Full endpoint reference: [Server README](https://github.com/CommandOSSLabs/sui-cli-web/blob/master/apps/server/README.md)
+
+## Docs
+
+- [GitHub repository](https://github.com/CommandOSSLabs/sui-cli-web)
+- [Changelog](https://sui-cli.dev/changelog): what shipped, by date
+- [Sui documentation](https://docs.sui.io)
+
+## Security
+
+- Private keys never leave your machine — all signing happens through your local Sui CLI; the only endpoint that returns a raw key is confirmation-gated
+- No per-request authentication on the local server. Fine on loopback (127.0.0.1) — anything that can reach it is already running as you. Not fine if exposed on a public interface without authentication in front of it.
+- Open source, MIT licensed

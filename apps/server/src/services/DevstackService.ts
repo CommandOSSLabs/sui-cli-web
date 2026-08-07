@@ -72,6 +72,16 @@ function packageId(value: string | { id: string }): string {
   return typeof value === 'string' ? value : value.id;
 }
 
+function normalizePackages(
+  packages: Record<string, string | { id: string }> | undefined
+): Record<string, string> {
+  const normalized: Record<string, string> = {};
+  for (const [pkg, id] of Object.entries(packages ?? {})) {
+    normalized[pkg] = packageId(id);
+  }
+  return normalized;
+}
+
 interface CacheEntry<T> {
   value: T;
   /** Wall-clock expiry for capability probes. */
@@ -249,9 +259,7 @@ export class DevstackService {
         faucet: net.faucet,
         graphql: net.graphql,
         local: net.local,
-        packages: Object.fromEntries(
-          Object.entries(net.packages ?? {}).map(([pkg, id]) => [pkg, packageId(id)])
-        ),
+        packages: normalizePackages(net.packages),
       };
     }
 

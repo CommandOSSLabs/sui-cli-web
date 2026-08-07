@@ -11,6 +11,8 @@ node_modules
 # Build outputs (except shared package which is needed for workspace imports)
 dist
 !packages/shared/dist
+.astro/
+coverage/
 
 # Logs
 npm-debug.log*

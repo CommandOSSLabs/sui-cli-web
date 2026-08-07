@@ -9,7 +9,7 @@
 
 **Local server that bridges your browser to the Sui CLI**
 
-[Live Demo](https://sui-cli-web-production.up.railway.app) · [Documentation](https://github.com/hien-p/raycast-sui-cli#readme) · [Report Bug](https://github.com/hien-p/raycast-sui-cli/issues)
+[Live Demo](https://sui-cli.dev) · [Documentation](https://github.com/CommandOSSLabs/sui-cli-web#readme) · [Report Bug](https://github.com/CommandOSSLabs/sui-cli-web/issues)
 
 </div>
 
@@ -17,10 +17,10 @@
 
 ## Why sui-cli-web-server?
 
-**Your private keys stay on YOUR machine.** This package runs a local server that connects the [web interface](https://sui-cli-web-production.up.railway.app) to your locally installed Sui CLI. No keys are ever transmitted to external servers.
+**Your private keys stay on YOUR machine.** This package runs a local server that connects the [web interface](https://sui-cli.dev) to your locally installed Sui CLI. No keys are ever transmitted to external servers.
 
 ```
-Browser (sui-cli-web-production.up.railway.app)  ←→  Local Server (this package)  ←→  Sui CLI (your machine)
+Browser (sui-cli.dev)  ←→  Local Server (this package)  ←→  Sui CLI (your machine)
 ```
 
 ## Quick Start
@@ -38,7 +38,7 @@ The installed binary is called `sui-cli-web`, but the package is
 fetches a different, older package (1.0.2) that is no longer updated, so use
 the full name.
 
-Then open **https://sui-cli-web-production.up.railway.app** - it connects automatically.
+Then open **https://sui-cli.dev** - it connects automatically.
 
 ## Features
 
@@ -147,7 +147,7 @@ that happens to hold the port.
 | `POST` | `/community/join` | Join community |
 | `GET` | `/community/tier/:address` | Get tier info |
 
-[Full API Documentation →](https://github.com/hien-p/raycast-sui-cli/blob/main/API_REFERENCE.md)
+[Full API Documentation →](https://github.com/CommandOSSLabs/sui-cli-web/blob/main/API_REFERENCE.md)
 
 ## Example Usage
 
@@ -209,7 +209,7 @@ a signal, be aware you may be listening on every interface.
   faucet. Sized for one local user, not for public traffic.
 - **CORS is an allowlist**, not a wildcard — but it only governs which web
   pages may read responses. It stops nothing that is not a browser.
-- **Open source** — [audit the code](https://github.com/hien-p/raycast-sui-cli).
+- **Open source** — [audit the code](https://github.com/CommandOSSLabs/sui-cli-web).
 
 ## Troubleshooting
 
@@ -237,14 +237,14 @@ cargo install --locked sui  # Other
 ### CORS errors
 
 Make sure you're accessing via:
-- `https://sui-cli-web-production.up.railway.app`
+- `https://sui-cli.dev`
 - `http://localhost:5173` (dev mode)
 
 ## Development
 
 ```bash
 # Clone the repo
-git clone https://github.com/hien-p/raycast-sui-cli.git
+git clone https://github.com/CommandOSSLabs/sui-cli-web.git
 cd raycast-sui-cli/packages/server
 
 # Install dependencies
@@ -265,7 +265,7 @@ npm run build
 
 ## Related
 
-- [Web Interface](https://sui-cli-web-production.up.railway.app) - Beautiful UI for this server
+- [Web Interface](https://sui-cli.dev) - Beautiful UI for this server
 - [Sui Documentation](https://docs.sui.io) - Official Sui docs
 - [Move Language](https://move-language.github.io/move/) - Smart contract language
 
@@ -277,6 +277,6 @@ MIT © [hien-p](https://github.com/hien-p)
 
 <div align="center">
 
-**[sui-cli-web-production.up.railway.app](https://sui-cli-web-production.up.railway.app)** · Made with ❤️ for the Sui community
+**[sui-cli.dev](https://sui-cli.dev)** · Made with ❤️ for the Sui community
 
 </div>

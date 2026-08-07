@@ -500,7 +500,7 @@ export function SetupChat({
               </button>
               <a
                 className="rounded-xl px-4 py-3.5 font-mono text-xs text-foreground/35 transition-colors hover:text-foreground/70"
-                href="https://github.com/hien-p/raycast-sui-cli"
+                href="https://github.com/CommandOSSLabs/sui-cli-web"
                 rel="noopener noreferrer"
                 target="_blank"
               >
